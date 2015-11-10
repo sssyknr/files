@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">SimpleTaskManage</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="main_add_task">タスク追加</string>
+    <string name="task_add_message">タスクを入力してください。</string>
+</resources>
