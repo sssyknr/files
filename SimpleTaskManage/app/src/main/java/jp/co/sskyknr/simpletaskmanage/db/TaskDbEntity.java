@@ -21,10 +21,12 @@ public class TaskDbEntity {
 
     public TaskDbEntity() {}
 
-    public TaskDbEntity(ContentValues values) {
-        task = (String) values.get(TaskDbDao.COLUMN_TASK);
-        statusId = (int) values.get(TaskDbDao.COLUMN_STATUS);
-        createdAt = (int) values.get(TaskDbDao.COLUMN_CREATED_AT);
+    public TaskDbEntity(int id, String task, int statusId) {
+        this.rowId = id;
+        this.task = task;
+        this.statusId = statusId;
+        int time = (int) System.currentTimeMillis();
+        createdAt = time;
     }
 
     // ////////////////////////////////////////////////////////////////////////////////////////////

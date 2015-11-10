@@ -18,7 +18,7 @@ import jp.co.sskyknr.simpletaskmanage.db.TaskDbEntity;
 /**
  * タスクリストのアダプター
  */
-public class FragmentTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
+public class MainTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
 
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Private フィールド
@@ -28,8 +28,6 @@ public class FragmentTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
      */
     private List<Integer> mCheckStatusList;
 
-    /** コンテキスト */
-    private Context mContext;
 
     /** OKボタンリスナー */
     private onItemButtonListener mListener;
@@ -40,7 +38,7 @@ public class FragmentTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
      * @param context
      * @param resource
      */
-    public FragmentTaskListAdapter(Context context, int resource, onItemButtonListener listener) {
+    public MainTaskListAdapter(Context context, int resource, onItemButtonListener listener) {
         super(context, resource);
         mCheckStatusList = new ArrayList<>();
         mListener = listener;
@@ -54,7 +52,7 @@ public class FragmentTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         View ret = convertView;
         if (ret == null) {
-            ret = View.inflate(getContext(), R.layout.fragment_task_list_item, null);
+            ret = View.inflate(getContext(), R.layout.main_task_list_item, null);
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.statusButton = (TextView) ret.findViewById(R.id.task_list_item_status);
             viewHolder.taskText = (TextView) ret.findViewById(R.id.task_list_item_text);
