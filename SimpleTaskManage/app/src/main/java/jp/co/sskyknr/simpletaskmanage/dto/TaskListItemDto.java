@@ -10,10 +10,9 @@ import jp.co.sskyknr.simpletaskmanage.util.colorUtil;
 public class TaskListItemDto {
     private int taskId;
     private String task;
-    private String stasus;
+    private String status;
     private int sequenceId;
     private int bgId;
-    private int createAt;
 
     public TaskListItemDto() {
 
@@ -28,15 +27,11 @@ public class TaskListItemDto {
     }
 
     public void setStasus(String stasus) {
-        this.stasus = stasus;
+        this.status = stasus;
     }
 
     public void setSequenceId(int sequenceId) {
         this.sequenceId = sequenceId;
-    }
-
-    public void setCreateAt(int createAt) {
-        this.createAt = createAt;
     }
 
     public void setBgImage(Context context, String color) {
@@ -52,15 +47,11 @@ public class TaskListItemDto {
     }
 
     public String getStasus() {
-        return stasus;
+        return status;
     }
 
     public int getSequenceId() {
         return sequenceId;
-    }
-
-    public int getCreateAt() {
-        return createAt;
     }
 
     public int getBgId() {

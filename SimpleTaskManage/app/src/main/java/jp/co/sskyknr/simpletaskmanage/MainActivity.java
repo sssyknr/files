@@ -10,7 +10,9 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,6 +46,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private MainTaskListAdapter mAdapter;
     /** ステータス管理リスト */
     public ArrayList<StatusDbEntity> mStatusList = new ArrayList<>();
+    /** ナビゲーションドロワー */
+    private DrawerLayout mDrawerLayout;
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Override メソッド
     // ////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,6 +146,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private void init() {
         setContentView(R.layout.activity_main);
 
+        // ナビゲーションドロワー
+        mDrawerLayout = ((DrawerLayout) findViewById(R.id.main_drawer_layout));
+
         // ツールバー
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         toolbar.setTitle("ここに画面タイトル出す");
@@ -149,7 +156,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                return false;
+                if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+                    mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                } else {
+                    mDrawerLayout.openDrawer(Gravity.RIGHT);
+                }
+                return true;
             }
         });
 

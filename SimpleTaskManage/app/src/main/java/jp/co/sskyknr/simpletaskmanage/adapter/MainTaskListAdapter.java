@@ -1,15 +1,9 @@
 package jp.co.sskyknr.simpletaskmanage.adapter;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Loader;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,7 +16,6 @@ import jp.co.sskyknr.simpletaskmanage.MainActivity;
 import jp.co.sskyknr.simpletaskmanage.R;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbDao;
-import jp.co.sskyknr.simpletaskmanage.db.TaskDbEntity;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbHelper;
 import jp.co.sskyknr.simpletaskmanage.dto.TaskListItemDto;
 
@@ -82,16 +75,7 @@ public class MainTaskListAdapter extends BaseAdapter {
             viewHolder.statusButton = (TextView) ret.findViewById(R.id.task_list_item_status);
             viewHolder.taskText = (TextView) ret.findViewById(R.id.task_list_item_text);
             viewHolder.trashButton = (ImageView) ret.findViewById(R.id.task_list_item_trash);
-            viewHolder.trashButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // ゴミ箱ボタン
-                    TaskListItemDto values = mList.get(position);
-                    if (mListener != null) {
-                        mListener.onTrashClick(values);
-                    }
-                }
-            });
+
             ret.setTag(viewHolder);
         }
 
@@ -131,6 +115,16 @@ public class MainTaskListAdapter extends BaseAdapter {
                 }
             });
             viewHolder.taskText.setText(value.getTask());
+            viewHolder.trashButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // ゴミ箱ボタン
+                    TaskListItemDto values = mList.get(position);
+                    if (mListener != null) {
+                        mListener.onTrashClick(values);
+                    }
+                }
+            });
         }
 
         return ret;

@@ -9,28 +9,95 @@
         android:layout_width="match_parent"
         android:layout_height="50dp" />
 
-    <!-- タスクリスト -->
-    <ListView
-        android:id="@+id/main_task_list"
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/main_drawer_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent">
 
-    <!-- タスク追加 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <!-- メインコンテンツ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/main_task_add_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            <!-- ツールバーに影をつける -->
+            <include layout="@layout/layout_toolbar_shadow" />
 
-        <Button
-            android:id="@+id/main_task_add_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_add_task" />
-    </LinearLayout>
+            <!-- タスクリスト -->
+            <ListView
+                android:id="@+id/main_task_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- タスク追加 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/main_task_add_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="タスクを入力" />
+
+                <Button
+                    android:id="@+id/main_task_add_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/main_add_task" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ナビゲーションドロワー -->
+        <LinearLayout
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/white"
+            android:clickable="true"
+            android:orientation="vertical">
+
+            <!-- ツールバーに影をつける -->
+            <include layout="@layout/layout_toolbar_shadow" />
+
+            <TextView
+                android:id="@+id/menu_status_setting"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:text="ステータス設定"
+                android:textSize="30sp" />
+
+            <include layout="@layout/layout_separate_line" />
+
+            <TextView
+                android:id="@+id/menu_refine"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:text="並べ替え"
+                android:textSize="30sp" />
+
+            <include layout="@layout/layout_separate_line" />
+
+            <TextView
+                android:id="@+id/menu_sort"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:text="絞り込み"
+                android:textSize="30sp" />
+
+            <include layout="@layout/layout_separate_line" />
+
+            <TextView
+                android:id="@+id/menu_about"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:text="AboutMe"
+                android:textSize="30sp" />
+
+            <include layout="@layout/layout_separate_line" />
+
+        </LinearLayout>
+    </android.support.v4.widget.DrawerLayout>
 </LinearLayout>
