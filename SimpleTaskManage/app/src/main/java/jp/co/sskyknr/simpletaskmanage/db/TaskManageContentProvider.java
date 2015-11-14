@@ -110,7 +110,6 @@ public class TaskManageContentProvider extends ContentProvider{
         synchronized (mutex) {
             SQLiteDatabase db = mDBHelper.getWritableDatabase();
             int count;
-            String id = uri.getPathSegments().get(1);
             switch (sUriMatcher.match(uri)) {
                 case TASK:
                     count = db.update(TaskDbDao.TABLE_NAME, values, selection, selectionArgs);

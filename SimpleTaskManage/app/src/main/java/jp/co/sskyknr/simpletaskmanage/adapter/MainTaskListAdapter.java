@@ -1,10 +1,16 @@
 package jp.co.sskyknr.simpletaskmanage.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Loader;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.support.v4.app.LoaderManager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,22 +18,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import jp.co.sskyknr.simpletaskmanage.MainActivity;
 import jp.co.sskyknr.simpletaskmanage.R;
+import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
+import jp.co.sskyknr.simpletaskmanage.db.TaskDbDao;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbEntity;
+import jp.co.sskyknr.simpletaskmanage.db.TaskDbHelper;
+import jp.co.sskyknr.simpletaskmanage.dto.TaskListItemDto;
 
 /**
  * タスクリストのアダプター
  */
-public class MainTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
+public class MainTaskListAdapter extends BaseAdapter {
 
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Private フィールド
     // ////////////////////////////////////////////////////////////////////////////////////////////
-    /**
-     * チェックの状態を管理
-     */
-    private List<Integer> mCheckStatusList;
+    /** コンテキスト */
+    private MainActivity mActivity;
 
+    /** リストアイテム */
+    private List<TaskListItemDto> mList;
 
     /** OKボタンリスナー */
     private onItemButtonListener mListener;
@@ -35,12 +46,11 @@ public class MainTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
     /**
      * コンストラクタ
      *
-     * @param context
-     * @param resource
+     * @param activity
      */
-    public MainTaskListAdapter(Context context, int resource, onItemButtonListener listener) {
-        super(context, resource);
-        mCheckStatusList = new ArrayList<>();
+    public MainTaskListAdapter(Activity activity, onItemButtonListener listener) {
+        mActivity = (MainActivity) activity;
+        mList = new ArrayList<>();
         mListener = listener;
     }
 
@@ -49,11 +59,26 @@ public class MainTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
     // ////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
+    public int getCount() {
+        return mList.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return mList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return mList.get(position).getTaskId();
+    }
+
+    @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         View ret = convertView;
         if (ret == null) {
-            ret = View.inflate(getContext(), R.layout.main_task_list_item, null);
-            ViewHolder viewHolder = new ViewHolder();
+            ret = View.inflate(mActivity, R.layout.main_task_list_item, null);
+            final ViewHolder viewHolder = new ViewHolder();
             viewHolder.statusButton = (TextView) ret.findViewById(R.id.task_list_item_status);
             viewHolder.taskText = (TextView) ret.findViewById(R.id.task_list_item_text);
             viewHolder.trashButton = (ImageView) ret.findViewById(R.id.task_list_item_trash);
@@ -61,53 +86,69 @@ public class MainTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
                 @Override
                 public void onClick(View v) {
                     // ゴミ箱ボタン
-                    Object item = getItem(position);
-                    if (item instanceof TaskDbEntity) {
-                        TaskDbEntity values = (TaskDbEntity) item;
-                        if (mListener != null) {
-                            mListener.onTrashClick(values);
-                        }
+                    TaskListItemDto values = mList.get(position);
+                    if (mListener != null) {
+                        mListener.onTrashClick(values);
                     }
                 }
             });
-//            viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//                @Override
-//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                    // チェックされた場合、変数に保持
-//                    mCheckStatusList.set(position, isChecked);
-//                }
-//            });
             ret.setTag(viewHolder);
         }
 
         Object object = ret.getTag();
         if (object instanceof ViewHolder) {
-            Object item = getItem(position);
-            if (item instanceof TaskDbEntity) {
-                TaskDbEntity value = (TaskDbEntity) item;
-                ViewHolder viewHolder = (ViewHolder) object;
-//                viewHolder.checkBox.setChecked(value.getStatusId());
-                viewHolder.taskText.setText(value.getTask());
-            }
+            final TaskListItemDto value = mList.get(position);
+            ViewHolder viewHolder = (ViewHolder) object;
+            viewHolder.statusButton.setBackgroundResource(value.getBgId());
+            viewHolder.statusButton.setText(value.getStasus());
+            viewHolder.statusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // ステータスクリック
+                    TextView statusButton = (TextView) v;
+                    TaskListItemDto values = mList.get(position);
+                    for (StatusDbEntity status : mActivity.mStatusList) {
+                        if (status.getSequenceId() == values.getSequenceId() + 1) {
+                            // 次のシーケンスIDのものに変化
+                            TaskListItemDto newValue = new TaskListItemDto();
+                            newValue.setTaskId(values.getTaskId());
+                            newValue.setTask(values.getTask());
+                            newValue.setStasus(status.getName());
+                            newValue.setSequenceId(status.getSequenceId());
+                            newValue.setBgImage(mActivity, status.getColor());
+                            statusButton.setText(newValue.getStasus());
+                            statusButton.setBackgroundResource(newValue.getBgId());
+                            // リストデータ更新
+                            mList.set(position, newValue);
+
+                            // データベースに変更を書き込み
+                            TaskDbHelper helper = new TaskDbHelper(mActivity);
+                            TaskDbDao dao = new TaskDbDao(helper.getWritableDatabase());
+                            dao.updateStatus(mActivity, values.getTaskId(), status.getId());
+                            break;
+                        }
+                    }
+                }
+            });
+            viewHolder.taskText.setText(value.getTask());
         }
 
         return ret;
     }
 
-    @Override
-    public void add(TaskDbEntity object) {
-        super.add(object);
-//        mCheckStatusList.add(false);
+    public void add(TaskListItemDto object) {
+        mList.add(object);
+        notifyDataSetChanged();
     }
 
-    @Override
-    public void addAll(@NonNull Collection<? extends TaskDbEntity> collection) {
-        super.addAll(collection);
+    public void addAll(@NonNull Collection<? extends TaskListItemDto> collection) {
+        mList.addAll(collection);
+        notifyDataSetChanged();
     }
 
-    @Override
-    public void remove(TaskDbEntity object) {
-        super.remove(object);
+    public void remove(TaskListItemDto object) {
+        mList.remove(object);
+        notifyDataSetChanged();
     }
 
     // ////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +168,6 @@ public class MainTaskListAdapter extends ArrayAdapter<TaskDbEntity> {
     // コールバック
     // ////////////////////////////////////////////////////////////////////////////////////////////
     public interface onItemButtonListener {
-        void onTrashClick(TaskDbEntity values);
+        void onTrashClick(TaskListItemDto values);
     }
 }

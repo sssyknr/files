@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbEntity;
+import jp.co.sskyknr.simpletaskmanage.dto.TaskListItemDto;
 
 /**
  * タスク追加ダイアログ
@@ -19,7 +20,7 @@ public class DeleteTaskDialogFragment extends DialogFragment{
     public DeleteTaskDialogFragment() {}
 
     /** 消去対象アイテム */
-    private TaskDbEntity mDeleteItem;
+    private TaskListItemDto mDeleteItem;
 
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Private フィールド
@@ -60,7 +61,7 @@ public class DeleteTaskDialogFragment extends DialogFragment{
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // public メソッド
     // ////////////////////////////////////////////////////////////////////////////////////////////
-    public void setDeleteItem(TaskDbEntity entity) {
+    public void setDeleteItem(TaskListItemDto entity) {
         mDeleteItem = entity;
     }
 
@@ -68,6 +69,6 @@ public class DeleteTaskDialogFragment extends DialogFragment{
     // interface
     // ////////////////////////////////////////////////////////////////////////////////////////////
     public interface deleteDialogCallback {
-        void onOkClick(TaskDbEntity entity);
+        void onOkClick(TaskListItemDto entity);
     }
 }
