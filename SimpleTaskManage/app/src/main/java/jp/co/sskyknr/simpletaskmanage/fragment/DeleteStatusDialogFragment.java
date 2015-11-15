@@ -7,20 +7,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
-import jp.co.sskyknr.simpletaskmanage.db.TaskDbEntity;
-import jp.co.sskyknr.simpletaskmanage.dto.TaskListItemDto;
+import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
 
 /**
  * タスク追加ダイアログ
  */
-public class DeleteTaskDialogFragment extends DialogFragment{
-    public static final String TAG = DeleteTaskDialogFragment.class.getCanonicalName();
+public class DeleteStatusDialogFragment extends DialogFragment{
+    public static final String TAG = DeleteStatusDialogFragment.class.getCanonicalName();
 
     /** デフォルトコンストラクタ */
-    public DeleteTaskDialogFragment() {}
+    public DeleteStatusDialogFragment() {}
 
     /** 消去対象アイテム */
-    private TaskListItemDto mDeleteItem;
+    private StatusDbEntity mDeleteItem;
 
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Private フィールド
@@ -35,7 +34,7 @@ public class DeleteTaskDialogFragment extends DialogFragment{
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("タスクの消去");
-        builder.setMessage("選択したタスクを消去しますか？");
+        builder.setMessage("選択したステータスを消去しますか？");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -61,7 +60,7 @@ public class DeleteTaskDialogFragment extends DialogFragment{
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // public メソッド
     // ////////////////////////////////////////////////////////////////////////////////////////////
-    public void setDeleteItem(TaskListItemDto entity) {
+    public void setDeleteItem(StatusDbEntity entity) {
         mDeleteItem = entity;
     }
 
@@ -69,6 +68,6 @@ public class DeleteTaskDialogFragment extends DialogFragment{
     // interface
     // ////////////////////////////////////////////////////////////////////////////////////////////
     public interface deleteDialogCallback {
-        void onOkClick(TaskListItemDto entity);
+        void onOkClick(StatusDbEntity entity);
     }
 }

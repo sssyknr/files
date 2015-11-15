@@ -119,14 +119,14 @@ public class StatusDbDao {
      * @param sequenceId
      * @param color
      */
-    public void insert(Context context, String name, int sequenceId, String color) {
+    public Uri insert(Context context, String name, int sequenceId, String color) {
         ContentResolver resolver = context.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_SEQUENCE_ID, sequenceId);
         values.put(COLUMN_COLOR, color);
 
-        resolver.insert(CONTENT_URI, values);
+        return resolver.insert(CONTENT_URI, values);
     }
 
     /**
@@ -144,14 +144,24 @@ public class StatusDbDao {
         return db.update(TABLE_NAME, values, whereClause, null);
     }
 
+    public int updateSequence(Context context, int id, int sequenceId) {
+        ContentResolver resolver = context.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_SEQUENCE_ID, sequenceId);
+        String whereClause = COLUMN_ID + "=" + id;
+        String[] selection = {COLUMN_SEQUENCE_ID};
+        return resolver.update(CONTENT_URI, values, whereClause, null);
+    }
+
     /**
      * データの削除   ----------------⑤
      *
      * @param rowId
      * @return
      */
-    public int delete(int rowId) {
+    public int delete(Context context, int rowId) {
+        ContentResolver resolver = context.getContentResolver();
         String whereClause = COLUMN_ID + "=" + rowId;
-        return db.delete(TABLE_NAME, whereClause, null);
+        return resolver.delete(CONTENT_URI, whereClause, null);
     }
 }

@@ -65,7 +65,10 @@
             <TextView
                 android:id="@+id/menu_status_setting"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="50dp"
+                android:background="@drawable/selector_textview"
+                android:gravity="center_vertical"
+                android:onClick="onClick"
                 android:text="ステータス設定"
                 android:textSize="30sp" />
 
@@ -74,7 +77,9 @@
             <TextView
                 android:id="@+id/menu_refine"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="50dp"
+                android:background="@drawable/selector_textview"
+                android:gravity="center_vertical"
                 android:text="並べ替え"
                 android:textSize="30sp" />
 
@@ -83,7 +88,9 @@
             <TextView
                 android:id="@+id/menu_sort"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="50dp"
+                android:background="@drawable/selector_textview"
+                android:gravity="center_vertical"
                 android:text="絞り込み"
                 android:textSize="30sp" />
 
@@ -92,7 +99,9 @@
             <TextView
                 android:id="@+id/menu_about"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="50dp"
+                android:background="@drawable/selector_textview"
+                android:gravity="center_vertical"
                 android:text="AboutMe"
                 android:textSize="30sp" />
 

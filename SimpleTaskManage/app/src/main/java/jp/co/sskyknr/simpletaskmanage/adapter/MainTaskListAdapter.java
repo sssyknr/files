@@ -91,8 +91,9 @@ public class MainTaskListAdapter extends BaseAdapter {
                     // ステータスクリック
                     TextView statusButton = (TextView) v;
                     TaskListItemDto values = mList.get(position);
+                    boolean isLast = true;
                     for (StatusDbEntity status : mActivity.mStatusList) {
-                        if (status.getSequenceId() == values.getSequenceId() + 1) {
+                        if (status.getSequenceId() > values.getSequenceId()) {
                             // 次のシーケンスIDのものに変化
                             TaskListItemDto newValue = new TaskListItemDto();
                             newValue.setTaskId(values.getTaskId());
@@ -109,7 +110,31 @@ public class MainTaskListAdapter extends BaseAdapter {
                             TaskDbHelper helper = new TaskDbHelper(mActivity);
                             TaskDbDao dao = new TaskDbDao(helper.getWritableDatabase());
                             dao.updateStatus(mActivity, values.getTaskId(), status.getId());
+                            isLast = false;
                             break;
+                        }
+                    }
+                    if (isLast) {
+                        for (StatusDbEntity status : mActivity.mStatusList) {
+                            if (status.getSequenceId() == 1) {
+                                // 次のシーケンスIDのものに変化
+                                TaskListItemDto newValue = new TaskListItemDto();
+                                newValue.setTaskId(values.getTaskId());
+                                newValue.setTask(values.getTask());
+                                newValue.setStasus(status.getName());
+                                newValue.setSequenceId(status.getSequenceId());
+                                newValue.setBgImage(mActivity, status.getColor());
+                                statusButton.setText(newValue.getStasus());
+                                statusButton.setBackgroundResource(newValue.getBgId());
+                                // リストデータ更新
+                                mList.set(position, newValue);
+
+                                // データベースに変更を書き込み
+                                TaskDbHelper helper = new TaskDbHelper(mActivity);
+                                TaskDbDao dao = new TaskDbDao(helper.getWritableDatabase());
+                                dao.updateStatus(mActivity, values.getTaskId(), status.getId());
+                                break;
+                            }
                         }
                     }
                 }
@@ -145,6 +170,10 @@ public class MainTaskListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void clear() {
+        mList.clear();
+        notifyDataSetChanged();
+    }
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Inner クラス
     // ////////////////////////////////////////////////////////////////////////////////////////////

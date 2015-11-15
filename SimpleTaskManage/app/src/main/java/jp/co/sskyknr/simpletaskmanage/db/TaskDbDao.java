@@ -69,54 +69,6 @@ public class TaskDbDao {
     // ////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * 全データの取得   ----------------①
-     *
-     * @return
-     */
-    public List<TaskDbEntity> findAll(Context context) {
-        List<TaskDbEntity> entityList = new ArrayList<TaskDbEntity>();
-        ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(CONTENT_URI, COLUMNS, null, null, null);
-
-        while (cursor.moveToNext()) {
-            TaskDbEntity entity = new TaskDbEntity();
-            entity.setRowId(cursor.getInt(0));
-            entity.setTask(cursor.getString(1));
-            entity.setStatusId(cursor.getInt(2));
-            entity.setCreatedAt(cursor.getInt(3));
-            entityList.add(entity);
-        }
-
-        return entityList;
-    }
-
-    /**
-     * 特定IDのデータを取得   ----------------②
-     *
-     * @param rowId
-     * @return
-     */
-    public TaskDbEntity findById(Context context, int rowId) {
-        String selection = COLUMN_ID + "=" + rowId;
-        ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(
-                CONTENT_URI,
-                COLUMNS,
-                selection,
-                null,
-                null);
-
-        cursor.moveToNext();
-        TaskDbEntity entity = new TaskDbEntity();
-        entity.setRowId(cursor.getInt(0));
-        entity.setTask(cursor.getString(1));
-        entity.setStatusId(cursor.getInt(2));
-        entity.setCreatedAt(cursor.getInt(3));
-
-        return entity;
-    }
-
-    /**
      * データの登録   ----------------③
      *
      * @param task

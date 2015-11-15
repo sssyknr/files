@@ -1,6 +1,7 @@
 package jp.co.sskyknr.simpletaskmanage;
 
 import android.content.ContentUris;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -42,6 +43,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private static final int QUERY_STATUS = 0;
     /** タスクの取得 */
     private static final int QUERY_TASK = 1;
+    /** リクエストコード:ステータス設定 */
+    private static final int REQUEST_STATUS_SETTING = 0;
     /** タスクリストアダプター */
     private MainTaskListAdapter mAdapter;
     /** ステータス管理リスト */
@@ -64,7 +67,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             TaskDbHelper helper = new TaskDbHelper(this);
             StatusDbDao dao = new StatusDbDao(helper.getWritableDatabase());
             dao.insert(this, "新規", 1, colorUtil.WHITE);
-            dao.insert(this, "終了", 2, colorUtil.GREY);
+            dao.insert(this, "進行中", 2, colorUtil.YELLOW);
+            dao.insert(this, "終了", 3, colorUtil.GREY);
             PreferenceUtil.writeFlag(this, PreferenceUtil.KEY_FIRST, false);
         }
 
@@ -73,8 +77,19 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_STATUS_SETTING:
+                // ステータス更新
+                mStatusList = null;
+                mStatusList = (ArrayList<StatusDbEntity>) data.getSerializableExtra(StatusDbEntity.class.getCanonicalName());
+                if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+                    // ドロワーが開いていれば閉じる
+                    mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                }
+                break;
+        }
     }
 
     @Override
@@ -134,6 +149,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 taskText.getEditableText().clear();
 
                 break;
+            case R.id.menu_status_setting:
+                Intent intent = new Intent(THIS, StatusSettingActivity.class);
+                startActivityForResult(intent, REQUEST_STATUS_SETTING);
+                break;
         }
     }
     // ////////////////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +184,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             }
         });
 
-        // タスク表示リスト
         ListView taskList = (ListView) findViewById(R.id.main_task_list);
         mAdapter = new MainTaskListAdapter(THIS, new MainTaskListAdapter.onItemButtonListener() {
             @Override
@@ -222,6 +240,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 }
 
                 // アダプターに追加
+                mAdapter.clear();
                 mAdapter.addAll(entityList);
             }
         }

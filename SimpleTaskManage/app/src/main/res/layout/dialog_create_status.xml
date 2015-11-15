@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- ステータス名 -->
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edit_status_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="ステータス名" />
+    </android.support.design.widget.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/selected_color_left"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="カラー"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/selected_color_right"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/image_red"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/red" />
+
+            <ImageView
+                android:id="@+id/image_pink"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/pink" />
+
+            <ImageView
+                android:id="@+id/image_purple"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/purple" />
+
+            <ImageView
+                android:id="@+id/image_deep_purple"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/deep_purple" />
+
+            <ImageView
+                android:id="@+id/image_indigo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/indigo" />
+
+            <ImageView
+                android:id="@+id/image_blue"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/blue" />
+
+            <ImageView
+                android:id="@+id/image_light_blue"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/light_blue" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/image_cyan"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/cyan" />
+
+            <ImageView
+                android:id="@+id/image_teal"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/teal" />
+
+            <ImageView
+                android:id="@+id/image_green"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/green" />
+
+            <ImageView
+                android:id="@+id/image_light_green"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/light_green" />
+
+            <ImageView
+                android:id="@+id/image_lime"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/lime" />
+
+            <ImageView
+                android:id="@+id/image_yellow"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/yellow" />
+
+            <ImageView
+                android:id="@+id/image_amber"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/amber" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/image_orange"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/orange" />
+
+            <ImageView
+                android:id="@+id/image_deep_orange"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/deep_orange" />
+
+            <ImageView
+                android:id="@+id/image_brown"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/brown" />
+
+            <ImageView
+                android:id="@+id/image_grey"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/grey" />
+
+            <ImageView
+                android:id="@+id/image_blue_grey"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/blue_grey" />
+
+            <ImageView
+                android:id="@+id/image_black"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/black" />
+
+            <ImageView
+                android:id="@+id/image_white"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/white" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:id="@+id/create_status_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="追加" />
+
+</LinearLayout>

@@ -1,9 +1,11 @@
 package jp.co.sskyknr.simpletaskmanage.db;
 
+import java.io.Serializable;
+
 /**
  * 状態管理エンティティ
  */
-public class StatusDbEntity {
+public class StatusDbEntity implements Serializable{
 
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // private フィールド
@@ -17,6 +19,16 @@ public class StatusDbEntity {
     /** 色 */
     private String color;
 
+    public StatusDbEntity() {
+
+    }
+
+    public StatusDbEntity(int id, String name, int sequenceId, String color) {
+        this.id = id;
+        this.name = name;
+        this.sequenceId = sequenceId;
+        this.color = color;
+    }
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // public フィールド
     // ////////////////////////////////////////////////////////////////////////////////////////////
