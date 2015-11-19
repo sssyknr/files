@@ -40,7 +40,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="タスクを入力" />
+                    android:hint="@string/label_hint_add_task" />
 
                 <Button
                     android:id="@+id/main_task_add_button"
@@ -67,21 +67,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/selector_textview"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:onClick="onClick"
-                android:text="ステータス設定"
-                android:textSize="30sp" />
-
-            <include layout="@layout/layout_separate_line" />
-
-            <TextView
-                android:id="@+id/menu_refine"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/selector_textview"
-                android:gravity="center_vertical"
-                android:text="並べ替え"
-                android:textSize="30sp" />
+                android:text="@string/label_menu_status"
+                android:textSize="16sp" />
 
             <include layout="@layout/layout_separate_line" />
 
@@ -90,9 +79,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/selector_textview"
-                android:gravity="center_vertical"
-                android:text="絞り込み"
-                android:textSize="30sp" />
+                android:gravity="center"
+                android:onClick="onClick"
+                android:text="@string/label_menu_sort"
+                android:textSize="16sp" />
+
+            <include layout="@layout/layout_separate_line" />
+
+            <TextView
+                android:id="@+id/menu_refine"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/selector_textview"
+                android:gravity="center"
+                android:onClick="onClick"
+                android:text="@string/label_menu_refine"
+                android:textSize="16sp" />
 
             <include layout="@layout/layout_separate_line" />
 
@@ -101,9 +103,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/selector_textview"
-                android:gravity="center_vertical"
-                android:text="AboutMe"
-                android:textSize="30sp" />
+                android:gravity="center"
+                android:onClick="onClick"
+                android:text="@string/label_menu_about_me"
+                android:textSize="16sp" />
 
             <include layout="@layout/layout_separate_line" />
 

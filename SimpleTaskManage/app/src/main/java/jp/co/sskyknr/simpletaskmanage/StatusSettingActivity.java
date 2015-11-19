@@ -9,6 +9,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,14 +25,19 @@ import jp.co.sskyknr.simpletaskmanage.fragment.CreateStatusDialog;
 import jp.co.sskyknr.simpletaskmanage.fragment.DeleteStatusDialogFragment;
 import jp.co.sskyknr.simpletaskmanage.fragment.DeleteTaskDialogFragment;
 import jp.co.sskyknr.simpletaskmanage.util.Constants;
+import jp.co.sskyknr.simpletaskmanage.view.SortableListView;
 
-public class StatusSettingActivity extends AppCompatActivity implements View.OnClickListener, DeleteStatusDialogFragment.deleteDialogCallback{
+public class StatusSettingActivity extends BaseActivity implements View.OnClickListener, DeleteStatusDialogFragment.deleteDialogCallback{
     /** 自インスタンス */
     private final StatusSettingActivity THIS = this;
     /** ステータス管理リスト */
     public ArrayList<StatusDbEntity> mStatusList = new ArrayList<>();
+    /** リストビュー */
+    private SortableListView mStatusListView;
     /** ステータスリストアダプター */
     public StatusListAdapter mAdapter;
+    /** ドラックのポジション */
+    private int mDraggingPosition;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +86,7 @@ public class StatusSettingActivity extends AppCompatActivity implements View.OnC
 
         // ツールバー
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        toolbar.setTitle("ステータス設定");
+        toolbar.setTitle(R.string.label_menu_status);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +100,47 @@ public class StatusSettingActivity extends AppCompatActivity implements View.OnC
         addButton.setOnClickListener(THIS);
 
         // リストビュー
-        ListView statusList = (ListView) findViewById(R.id.status_setting_list);
+        TaskDbHelper helper = new TaskDbHelper(THIS);
+        final StatusDbDao dao = new StatusDbDao(helper.getWritableDatabase());
+        mStatusListView = (SortableListView) findViewById(R.id.status_setting_list);
+        mStatusListView.setSortable(true);
+        mStatusListView.setDragListener(new SortableListView.DragListener() {
+            @Override
+            public int onStartDrag(int position) {
+                mDraggingPosition = position;
+                mStatusListView.invalidateViews();
+                return 0;
+            }
+
+            @Override
+            public int onDuringDrag(int positionFrom, int positionTo) {
+                if (positionFrom < 0 || positionTo < 0 || mDraggingPosition == positionTo) {
+                    return positionFrom;
+                }
+
+                // シーケンスID入れ替え(アダプター)
+                StatusDbEntity dragItem = (StatusDbEntity) mAdapter.getItem(mDraggingPosition);
+                StatusDbEntity changeItem = (StatusDbEntity) mAdapter.getItem(positionTo);
+                mAdapter.changeItem(mDraggingPosition, positionTo);
+                // シーケンスID入れ替え(ステータスリスト)
+                StatusDbEntity fromItem = mStatusList.get(mDraggingPosition);
+                StatusDbEntity toItem = mStatusList.get(positionTo);
+                mStatusList.set(mDraggingPosition, toItem);
+                mStatusList.set(positionTo, fromItem);
+                // シーケンスID入れ替え(DB)
+                dao.updateSequence(THIS, dragItem.getId(), dragItem.getSequenceId());
+                dao.updateSequence(THIS, changeItem.getId(), changeItem.getSequenceId());
+                mDraggingPosition = positionTo;
+                mStatusListView.invalidateViews();
+                return 0;
+            }
+
+            @Override
+            public boolean onStopDrag(int positionFrom, int positionTo) {
+                mStatusListView.invalidateViews();
+                return false;
+            }
+        });
         mAdapter = new StatusListAdapter(THIS, new StatusListAdapter.onItemButtonListener() {
             @Override
             public void onTrashClick(StatusDbEntity values) {
@@ -105,7 +151,21 @@ public class StatusSettingActivity extends AppCompatActivity implements View.OnC
                 dialogFragment.show(getSupportFragmentManager(), DeleteTaskDialogFragment.TAG);
             }
         });
-        statusList.setAdapter(mAdapter);
+        mStatusListView.setAdapter(mAdapter);
+    }
+
+    private void sortStatusListBySequenceId() {
+        ArrayList<StatusDbEntity> tmp = new ArrayList<>();
+        for (int i = 1; i <= mStatusList.size() ; i++ ) {
+            for (int j = 0; j < mStatusList.size(); j++) {
+                if (mStatusList.get(j).getSequenceId() == i) {
+                    tmp.add(mStatusList.get(j));
+                    break;
+                }
+            }
+        }
+        mStatusList.clear();
+        mStatusList.addAll(tmp);
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////////////
@@ -149,6 +209,7 @@ public class StatusSettingActivity extends AppCompatActivity implements View.OnC
                 }
 
                 // アダプターに設定
+                sortStatusListBySequenceId();
                 mAdapter.addAll(mStatusList);
             }
         }

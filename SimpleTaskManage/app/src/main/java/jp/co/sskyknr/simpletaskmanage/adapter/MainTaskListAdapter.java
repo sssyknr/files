@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import jp.co.sskyknr.simpletaskmanage.MainActivity;
@@ -23,6 +25,8 @@ import jp.co.sskyknr.simpletaskmanage.dto.TaskListItemDto;
  * タスクリストのアダプター
  */
 public class MainTaskListAdapter extends BaseAdapter {
+    public static final String SORT_TYPE_STATUS = "status";
+    public static final  String SORT_TYPE_DATE = "date";
 
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Private フィールド
@@ -172,6 +176,14 @@ public class MainTaskListAdapter extends BaseAdapter {
 
     public void clear() {
         mList.clear();
+        notifyDataSetChanged();
+    }
+
+    /**
+     * ステータス順にソート
+     */
+    public void sort(Comparator<TaskListItemDto> comparator) {
+        Collections.sort(mList, comparator);
         notifyDataSetChanged();
     }
     // ////////////////////////////////////////////////////////////////////////////////////////////

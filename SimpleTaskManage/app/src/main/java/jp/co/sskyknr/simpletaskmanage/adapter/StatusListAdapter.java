@@ -78,6 +78,10 @@ public class StatusListAdapter extends BaseAdapter{
                     }
                 }
             });
+            if (mList.get(position).getSequenceId() == 1) {
+                // 最初の要素は消せない
+                viewHolder.trashButton.setVisibility(View.INVISIBLE);
+            }
         }
         return ret;
     }
@@ -95,6 +99,22 @@ public class StatusListAdapter extends BaseAdapter{
     public void remove(StatusDbEntity object) {
         mList.remove(object);
         notifyDataSetChanged();
+    }
+
+    public void changeItem(int from, int to) {
+        StatusDbEntity fromItem = mList.get(from);
+        StatusDbEntity toItem = mList.get(to);
+        int fromSequence = fromItem.getSequenceId();
+        int toSequence = toItem.getSequenceId();
+        toItem.setSequenceId(fromSequence);
+        fromItem.setSequenceId(toSequence);
+        mList.set(from, toItem);
+        mList.set(to, fromItem);
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<StatusDbEntity> getList() {
+        return mList;
     }
 
     private class ViewHolder {

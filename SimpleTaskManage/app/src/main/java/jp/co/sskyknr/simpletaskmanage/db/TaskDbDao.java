@@ -75,13 +75,12 @@ public class TaskDbDao {
      * @param statusId
      * @return
      */
-    public Uri insert(Context context, String task, int statusId) {
+    public Uri insert(Context context, String task, int statusId, long createAt) {
         ContentResolver resolver = context.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(COLUMN_TASK, task);
         values.put(COLUMN_STATUS, statusId);
-        int time = (int) System.currentTimeMillis();
-        values.put(COLUMN_CREATED_AT, time);
+        values.put(COLUMN_CREATED_AT, createAt);
 
         return resolver.insert(CONTENT_URI, values);
     }

@@ -6,4 +6,16 @@
     <string name="main_add_task">タスク追加</string>
     <string name="task_add_message">タスクを入力してください。</string>
     <string name="title_activity_status_setting">StatusSettingActivity</string>
+    <string name="label_hint_add_task">タスクを入力</string>
+    <string name="label_menu_status">状態設定</string>
+    <string name="label_menu_sort">並べ替え</string>
+    <string name="label_menu_refine">絞り込み</string>
+    <string name="label_menu_about_me">AboutMe</string>
+    <string name="label_sort_status_ascending">状態昇順</string>
+    <string name="label_sort_status_descending">状態降順</string>
+    <string name="label_sort_date_ascending">日付昇順</string>
+    <string name="label_sort_date_descending">日付降順</string>
+    <string name="label_task">タスク</string>
+    <string name="label_complete">完了</string>
+
 </resources>

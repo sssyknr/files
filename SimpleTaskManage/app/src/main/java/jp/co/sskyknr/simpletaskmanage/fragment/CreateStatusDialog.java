@@ -203,7 +203,7 @@ public class CreateStatusDialog extends DialogFragment implements View.OnClickLi
                     return;
                 }
                 StatusSettingActivity activity = (StatusSettingActivity) getActivity();
-                int last = -1;
+                int last = 0;
                 for (StatusDbEntity entity : activity.mStatusList) {
                     if (last < entity.getSequenceId()) {
                         last = entity.getSequenceId();

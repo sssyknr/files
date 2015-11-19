@@ -13,6 +13,7 @@ public class TaskListItemDto {
     private String status;
     private int sequenceId;
     private int bgId;
+    public long createAt;
 
     public TaskListItemDto() {
 

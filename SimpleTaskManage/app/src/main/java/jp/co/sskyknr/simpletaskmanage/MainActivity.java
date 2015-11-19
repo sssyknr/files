@@ -9,42 +9,52 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.graphics.ColorUtils;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jp.co.sskyknr.simpletaskmanage.adapter.MainTaskListAdapter;
+import jp.co.sskyknr.simpletaskmanage.adapter.TaskListDateAscendingComparator;
+import jp.co.sskyknr.simpletaskmanage.adapter.TaskListDateDescendingComparator;
+import jp.co.sskyknr.simpletaskmanage.adapter.TaskListStatusAscendingComparator;
+import jp.co.sskyknr.simpletaskmanage.adapter.TaskListStatusDescendingComparator;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbDao;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbDao;
-import jp.co.sskyknr.simpletaskmanage.db.TaskDbEntity;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbHelper;
 import jp.co.sskyknr.simpletaskmanage.dto.TaskListItemDto;
 import jp.co.sskyknr.simpletaskmanage.fragment.DeleteTaskDialogFragment;
+import jp.co.sskyknr.simpletaskmanage.fragment.SortTaskSettingDialog;
+import jp.co.sskyknr.simpletaskmanage.fragment.TaskDetailDialog;
 import jp.co.sskyknr.simpletaskmanage.util.Common;
 import jp.co.sskyknr.simpletaskmanage.util.PreferenceUtil;
 import jp.co.sskyknr.simpletaskmanage.util.colorUtil;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, DeleteTaskDialogFragment.deleteDialogCallback {
+public class MainActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener, DeleteTaskDialogFragment.deleteDialogCallback, SortTaskSettingDialog.clickButton{
     /** 自インスタンス */
     private final MainActivity THIS = this;
     /** ステータスの取得 */
     private static final int QUERY_STATUS = 0;
-    /** タスクの取得 */
-    private static final int QUERY_TASK = 1;
+    /** タスクの取得（全件） */
+    private static final int QUERY_ALL_TASK = 1;
+    /** タスクの取得（一部） */
     /** リクエストコード:ステータス設定 */
+    private static final int QUERY_SELECT_TASK = 2;
     private static final int REQUEST_STATUS_SETTING = 0;
+    /** リクエストコード:絞り込み設定 */
+    private static final int REQUEST_REFINE_SETTING = 1;
     /** タスクリストアダプター */
     private MainTaskListAdapter mAdapter;
     /** ステータス管理リスト */
@@ -89,6 +99,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     mDrawerLayout.closeDrawer(Gravity.RIGHT);
                 }
                 break;
+            case REQUEST_REFINE_SETTING:
+                // 絞り込み
+                if (data == null) {
+                    return;
+                }
+                Bundle bundle = data.getBundleExtra("bundle");
+                getSupportLoaderManager().restartLoader(QUERY_SELECT_TASK, bundle, allQueryCallback);
+                break;
         }
     }
 
@@ -116,6 +134,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()) {
             case R.id.main_task_add_button:
                 // タスク追加ボタン
@@ -129,17 +148,25 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 // DBに追加
                 TaskDbHelper helper = new TaskDbHelper(THIS);
                 TaskDbDao taskDao = new TaskDbDao(helper.getWritableDatabase());
-                Uri row = taskDao.insert(THIS, task, 1);
+                long time = System.currentTimeMillis();
+                int firstStatus = 0;
+                for (StatusDbEntity entity : mStatusList) {
+                    if (entity.getSequenceId() == 1) {
+                        firstStatus = entity.getId();
+                    }
+                }
+                Uri row = taskDao.insert(THIS, task, firstStatus, time);
 
                 // リストに追加
                 TaskListItemDto entity = new TaskListItemDto();
                 entity.setTaskId((int) ContentUris.parseId(row));
                 entity.setTask(task);
                 for (StatusDbEntity status : mStatusList) {
-                    if (status.getId() == 1) {
+                    if (status.getId() == firstStatus) {
                         entity.setStasus(status.getName());
                         entity.setSequenceId(status.getSequenceId());
                         entity.setBgImage(THIS, status.getColor());
+                        entity.createAt = time;
                         break;
                     }
                 }
@@ -150,15 +177,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
                 break;
             case R.id.menu_status_setting:
-                Intent intent = new Intent(THIS, StatusSettingActivity.class);
+                // ステータス設定
+                intent = new Intent(THIS, StatusSettingActivity.class);
                 startActivityForResult(intent, REQUEST_STATUS_SETTING);
+                mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                break;
+            case R.id.menu_sort:
+                // 並べ替え
+                SortTaskSettingDialog sortSettingDialog = new SortTaskSettingDialog();
+                sortSettingDialog.show(getSupportFragmentManager(), SortTaskSettingDialog.TAG);
+                mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                break;
+            case R.id.menu_refine:
+                // 絞り込み
+                intent = new Intent(THIS, TaskRefineSettingActivity.class);
+                startActivityForResult(intent, REQUEST_REFINE_SETTING);
+                mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                break;
+            case R.id.menu_about:
+                // AboutMe
+                mDrawerLayout.closeDrawer(Gravity.RIGHT);
                 break;
         }
     }
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Private メソッド
     // ////////////////////////////////////////////////////////////////////////////////////////////
-
     /**
      * 初期化
      */
@@ -170,7 +214,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         // ツールバー
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        toolbar.setTitle("ここに画面タイトル出す");
+        toolbar.setTitle(getString(R.string.label_task));
         toolbar.inflateMenu(R.menu.menu_main);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -185,6 +229,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         });
 
         ListView taskList = (ListView) findViewById(R.id.main_task_list);
+        taskList.setOnItemClickListener(THIS);
         mAdapter = new MainTaskListAdapter(THIS, new MainTaskListAdapter.onItemButtonListener() {
             @Override
             public void onTrashClick(TaskListItemDto values) {
@@ -211,8 +256,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     LoaderManager.LoaderCallbacks allQueryCallback = new LoaderManager.LoaderCallbacks() {
         @Override
         public Loader onCreateLoader(int id, Bundle args) {
-            // 全件取得
-            return new CursorLoader(THIS, TaskDbDao.CONTENT_URI, null, null, null, null);
+            switch (id) {
+                case QUERY_ALL_TASK:
+                    // 全件取得
+                    return new CursorLoader(THIS, TaskDbDao.CONTENT_URI, null, null, null, null);
+                case QUERY_SELECT_TASK:
+                    // 一部取得
+                    String[] sql = args.getStringArray("sql");
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0; i < sql.length; i++) {
+                        builder.append(TaskDbDao.COLUMN_STATUS + "=?");
+                        if (i != sql.length -1) {
+                            builder.append(" OR ");
+                        }
+                    }
+//                    String selection = TaskDbDao.COLUMN_STATUS + "=?";
+                    return new CursorLoader(THIS, TaskDbDao.CONTENT_URI, null, builder.toString(), sql, null);
+            }
+            return null;
         }
 
         @Override
@@ -232,6 +293,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                             entity.setStasus(status.getName());
                             entity.setSequenceId(status.getSequenceId());
                             entity.setBgImage(THIS, status.getColor());
+                            entity.createAt = cursor.getLong(3);
                             break;
                         }
                     }
@@ -264,7 +326,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     }
 
     /**
-     * ステータス取得
+     * ステータス全取得
      */
     LoaderManager.LoaderCallbacks statusQueryCallback = new LoaderManager.LoaderCallbacks() {
         @Override
@@ -290,7 +352,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 }
 
                 // DBからタスクを取得
-                getSupportLoaderManager().initLoader(QUERY_TASK, null, allQueryCallback);
+                getSupportLoaderManager().initLoader(QUERY_ALL_TASK, null, allQueryCallback);
             }
         }
 
@@ -299,4 +361,32 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         }
     };
+
+    @Override
+    public void onOk(String selected) {
+        final String statusAscending = getString(R.string.label_sort_status_ascending);
+        final String statusDescending = getString(R.string.label_sort_status_descending);
+        final String dateAscending = getString(R.string.label_sort_date_ascending);
+        final String dateDescending = getString(R.string.label_sort_date_descending);
+        if (dateAscending.equals(selected)) {
+            mAdapter.sort(new TaskListDateAscendingComparator());
+        } else if (dateDescending.equals(selected)) {
+            mAdapter.sort(new TaskListDateDescendingComparator());
+        } else if (statusAscending.equals(selected)) {
+            mAdapter.sort(new TaskListStatusAscendingComparator());
+        } else if (statusDescending.equals(selected)) {
+            mAdapter.sort(new TaskListStatusDescendingComparator());
+        }
+    }
+
+    @Override
+    public void onCancel() {
+
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        TaskDetailDialog dialog = TaskDetailDialog.newInstance((TaskListItemDto) mAdapter.getItem(position));
+        dialog.show(getSupportFragmentManager(), TaskDetailDialog.TAG);
+    }
 }

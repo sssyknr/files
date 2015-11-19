@@ -6,12 +6,12 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/status_label_color"
+        android:id="@+id/status_refine_item_color"
         android:layout_width="6dp"
         android:layout_height="match_parent" />
 
     <TextView
-        android:id="@+id/status_name"
+        android:id="@+id/status_refine_item_text"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -28,13 +28,10 @@
         android:layout_marginRight="20dp"
         android:scaleType="fitCenter" />
 
-    <ImageView
-        android:id="@+id/status_list_item_trash"
-        android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_delete_black_24dp" />
+    <CheckBox
+        android:id="@+id/status_refine_item_check"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />
 
     <View
         android:layout_width="20dp"
