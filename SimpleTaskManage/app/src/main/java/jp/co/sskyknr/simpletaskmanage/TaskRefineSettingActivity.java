@@ -17,9 +17,10 @@ import jp.co.sskyknr.simpletaskmanage.adapter.TaskRefineSettingAdapter;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbDao;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
 import jp.co.sskyknr.simpletaskmanage.util.Constants;
+import jp.co.sskyknr.simpletaskmanage.util.GAUtil;
 
 /**
- * Created by sskuykn on 2015/11/18.
+ * 絞り込み設定画面
  */
 public class TaskRefineSettingActivity extends BaseActivity implements View.OnClickListener{
     /** 自インスタンス */
@@ -32,6 +33,9 @@ public class TaskRefineSettingActivity extends BaseActivity implements View.OnCl
         init();
 
         getSupportLoaderManager().initLoader(0, null, statusQueryCallback);
+
+        // 絞り込み画面訪問GA送信
+        GAUtil.sendGAEventOfScreen(THIS, GAUtil.SCREEN_REFINE);
     }
 
     private void init() {
@@ -71,6 +75,9 @@ public class TaskRefineSettingActivity extends BaseActivity implements View.OnCl
                 Intent intent = new Intent();
                 intent.putExtra("bundle", bundle);
                 setResult(Constants.RESULT_OK, intent);
+
+                // 絞り込みGA送信
+                GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_REFINE, GAUtil.ACTION_BUTTON, GAUtil.LABEL_REFINE);
                 finish();
         }
     }
@@ -100,6 +107,8 @@ public class TaskRefineSettingActivity extends BaseActivity implements View.OnCl
                     statusList.add(entity);
                     cursor.moveToNext();
                 }
+
+                cursor.close();
 
                 // リストに追加
                 mAdapter.addAll(statusList);

@@ -3,7 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="main_add_task">タスク追加</string>
+    <string name="main_add_task">追加</string>
     <string name="task_add_message">タスクを入力してください。</string>
     <string name="title_activity_status_setting">StatusSettingActivity</string>
     <string name="label_hint_add_task">タスクを入力</string>

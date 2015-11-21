@@ -3,4 +3,5 @@
     <color name="selected">#dcdcdc</color>
     <color name="normal">#FFFFFF</color>
     <color name="border">#616161</color>
+    <color name="border_pressed">#414141</color>
 </resources>

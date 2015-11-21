@@ -11,7 +11,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,8 +20,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import jp.co.sskyknr.simpletaskmanage.adapter.MainTaskListAdapter;
@@ -39,10 +40,11 @@ import jp.co.sskyknr.simpletaskmanage.fragment.DeleteTaskDialogFragment;
 import jp.co.sskyknr.simpletaskmanage.fragment.SortTaskSettingDialog;
 import jp.co.sskyknr.simpletaskmanage.fragment.TaskDetailDialog;
 import jp.co.sskyknr.simpletaskmanage.util.Common;
+import jp.co.sskyknr.simpletaskmanage.util.GAUtil;
 import jp.co.sskyknr.simpletaskmanage.util.PreferenceUtil;
 import jp.co.sskyknr.simpletaskmanage.util.colorUtil;
 
-public class MainActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener, DeleteTaskDialogFragment.deleteDialogCallback, SortTaskSettingDialog.clickButton{
+public class MainActivity extends BaseActivity implements View.OnClickListener, AdapterView.OnItemClickListener, DeleteTaskDialogFragment.deleteDialogCallback, SortTaskSettingDialog.clickButton, TaskDetailDialog.TaskDetailDialogCallabck{
     /** 自インスタンス */
     private final MainActivity THIS = this;
     /** ステータスの取得 */
@@ -80,8 +82,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             dao.insert(this, "進行中", 2, colorUtil.YELLOW);
             dao.insert(this, "終了", 3, colorUtil.GREY);
             PreferenceUtil.writeFlag(this, PreferenceUtil.KEY_FIRST, false);
+
+            // 初回起動GA送信
+            GAUtil.sendGAEventOfScreen(THIS, GAUtil.SCREEN_MAIN_FIRST);
         }
 
+        // 起動GA送信
+        GAUtil.sendGAEventOfScreen(THIS, GAUtil.SCREEN_MAIN);
         // ステータス取得
         getSupportLoaderManager().initLoader(QUERY_STATUS, null, statusQueryCallback);
     }
@@ -108,28 +115,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 getSupportLoaderManager().restartLoader(QUERY_SELECT_TASK, bundle, allQueryCallback);
                 break;
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -175,28 +160,38 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 // テキストのクリア
                 taskText.getEditableText().clear();
 
+                // GAタスク追加アクション送信
+                GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_ADD_TASK);
                 break;
             case R.id.menu_status_setting:
                 // ステータス設定
                 intent = new Intent(THIS, StatusSettingActivity.class);
                 startActivityForResult(intent, REQUEST_STATUS_SETTING);
                 mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                // GAタスク追加アクション送信
+                GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_STATUS);
                 break;
             case R.id.menu_sort:
                 // 並べ替え
                 SortTaskSettingDialog sortSettingDialog = new SortTaskSettingDialog();
                 sortSettingDialog.show(getSupportFragmentManager(), SortTaskSettingDialog.TAG);
                 mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                // GAタスク追加アクション送信
+                GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_SORT);
                 break;
             case R.id.menu_refine:
                 // 絞り込み
                 intent = new Intent(THIS, TaskRefineSettingActivity.class);
                 startActivityForResult(intent, REQUEST_REFINE_SETTING);
                 mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                // GAタスク追加アクション送信
+                GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_REFINE);
                 break;
             case R.id.menu_about:
                 // AboutMe
                 mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                // GAタスク追加アクション送信
+                GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_ABOUT_ME);
                 break;
         }
     }
@@ -221,8 +216,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             public boolean onMenuItemClick(MenuItem item) {
                 if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
                     mDrawerLayout.closeDrawer(Gravity.RIGHT);
+                    // ドロワークローズイベント送信
+                    GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_DRAWER_CLOSE);
                 } else {
                     mDrawerLayout.openDrawer(Gravity.RIGHT);
+                    // ドロワーオープンイベント送信
+                    GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_DRAWER_OPEN);
                 }
                 return true;
             }
@@ -245,6 +244,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         // タスク追加ボタン
         Button button = (Button) findViewById(R.id.main_task_add_button);
         button.setOnClickListener(THIS);
+
+        // 広告
+        AdView adView = (AdView)this.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     // ////////////////////////////////////////////////////////////////////////////////////////////
@@ -270,7 +274,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                             builder.append(" OR ");
                         }
                     }
-//                    String selection = TaskDbDao.COLUMN_STATUS + "=?";
                     return new CursorLoader(THIS, TaskDbDao.CONTENT_URI, null, builder.toString(), sql, null);
             }
             return null;
@@ -300,6 +303,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     entityList.add(entity);
                     cursor.moveToNext();
                 }
+                cursor.close();
 
                 // アダプターに追加
                 mAdapter.clear();
@@ -323,6 +327,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         // リストから消去
         mAdapter.remove(entity);
+
+        // ゴミ箱ボタンクリックイベント送信
+        GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_DELETE_TASK);
     }
 
     /**
@@ -351,6 +358,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                     cursor.moveToNext();
                 }
 
+                cursor.close();
+
                 // DBからタスクを取得
                 getSupportLoaderManager().initLoader(QUERY_ALL_TASK, null, allQueryCallback);
             }
@@ -370,12 +379,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
         final String dateDescending = getString(R.string.label_sort_date_descending);
         if (dateAscending.equals(selected)) {
             mAdapter.sort(new TaskListDateAscendingComparator());
+            // ソートGA送信
+            GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_SORT, GAUtil.ACTION_BUTTON, GAUtil.LABEL_DATE_UP);
         } else if (dateDescending.equals(selected)) {
             mAdapter.sort(new TaskListDateDescendingComparator());
+            // ソートGA送信
+            GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_SORT, GAUtil.ACTION_BUTTON, GAUtil.LABEL_DATE_DOWN);
         } else if (statusAscending.equals(selected)) {
             mAdapter.sort(new TaskListStatusAscendingComparator());
+            // ソートGA送信
+            GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_SORT, GAUtil.ACTION_BUTTON, GAUtil.LABEL_STATUS_UP);
         } else if (statusDescending.equals(selected)) {
             mAdapter.sort(new TaskListStatusDescendingComparator());
+            // ソートGA送信
+            GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_SORT, GAUtil.ACTION_BUTTON, GAUtil.LABEL_STATUS_DOWN);
         }
     }
 
@@ -388,5 +405,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         TaskDetailDialog dialog = TaskDetailDialog.newInstance((TaskListItemDto) mAdapter.getItem(position));
         dialog.show(getSupportFragmentManager(), TaskDetailDialog.TAG);
+
+        // 詳細GA送信
+        GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_DETAIL_TASK);
+    }
+
+    @Override
+    public void onCloseClick(boolean isEdit) {
+        if (isEdit) {
+            // 編集が行われていた場合
+            getSupportLoaderManager().restartLoader(QUERY_ALL_TASK, null, allQueryCallback);
+            // タスク編集GA送信
+            GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_EDIT_TASK);
+        }
     }
 }

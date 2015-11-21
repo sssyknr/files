@@ -1,6 +1,7 @@
 package jp.co.sskyknr.simpletaskmanage.adapter;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbDao;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbHelper;
 import jp.co.sskyknr.simpletaskmanage.dto.TaskListItemDto;
+import jp.co.sskyknr.simpletaskmanage.util.GAUtil;
+import jp.co.sskyknr.simpletaskmanage.util.colorUtil;
 
 /**
  * タスクリストのアダプター
@@ -97,7 +100,7 @@ public class MainTaskListAdapter extends BaseAdapter {
                     TaskListItemDto values = mList.get(position);
                     boolean isLast = true;
                     for (StatusDbEntity status : mActivity.mStatusList) {
-                        if (status.getSequenceId() > values.getSequenceId()) {
+                        if (status.getSequenceId() == values.getSequenceId() + 1) {
                             // 次のシーケンスIDのものに変化
                             TaskListItemDto newValue = new TaskListItemDto();
                             newValue.setTaskId(values.getTaskId());
@@ -141,6 +144,8 @@ public class MainTaskListAdapter extends BaseAdapter {
                             }
                         }
                     }
+                    // タスク状態変更GA送信
+                    GAUtil.sendGAEventOfAction(mActivity, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_CHANGE_STATUS);
                 }
             });
             viewHolder.taskText.setText(value.getTask());
@@ -148,8 +153,8 @@ public class MainTaskListAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     // ゴミ箱ボタン
-                    TaskListItemDto values = mList.get(position);
                     if (mListener != null) {
+                        TaskListItemDto values = mList.get(position);
                         mListener.onTrashClick(values);
                     }
                 }

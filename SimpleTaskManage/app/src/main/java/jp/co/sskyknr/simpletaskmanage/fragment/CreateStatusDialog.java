@@ -17,6 +17,7 @@ import jp.co.sskyknr.simpletaskmanage.db.StatusDbDao;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbHelper;
 import jp.co.sskyknr.simpletaskmanage.util.Common;
+import jp.co.sskyknr.simpletaskmanage.util.GAUtil;
 import jp.co.sskyknr.simpletaskmanage.util.colorUtil;
 
 /**
@@ -219,6 +220,9 @@ public class CreateStatusDialog extends DialogFragment implements View.OnClickLi
                 StatusDbEntity entity = new StatusDbEntity(id, input, last + 1, mSelectedColor);
                 activity.mStatusList.add(entity);
                 activity.mAdapter.add(entity);
+
+                // 状態追加GA送信
+                GAUtil.sendGAEventOfAction(getActivity(), GAUtil.CATEGORY_STATUS, GAUtil.ACTION_ADD_STATUS, entity.getColor());
 
                 dismiss();
                 break;

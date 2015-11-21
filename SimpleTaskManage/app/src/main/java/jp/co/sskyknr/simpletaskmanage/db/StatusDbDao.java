@@ -62,55 +62,6 @@ public class StatusDbDao {
     // ////////////////////////////////////////////////////////////////////////////////////////////
     // Public メソッド
     // ////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * 全データの取得   ----------------①
-     *
-     * @return
-     */
-    public List<StatusDbEntity> findAll(Context context) {
-        List<StatusDbEntity> entityList = new ArrayList<StatusDbEntity>();
-        ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(CONTENT_URI, COLUMNS, null, null, null);
-
-        while (cursor.moveToNext()) {
-            StatusDbEntity entity = new StatusDbEntity();
-            entity.setId(cursor.getInt(0));
-            entity.setName(cursor.getString(1));
-            entity.setSequenceId(cursor.getInt(2));
-            entity.setColor(cursor.getString(3));
-            entityList.add(entity);
-        }
-
-        return entityList;
-    }
-
-    /**
-     * 特定IDのデータを取得   ----------------②
-     *
-     * @param rowId
-     * @return
-     */
-    public StatusDbEntity findById(Context context, int rowId) {
-        String selection = COLUMN_ID + "=" + rowId;
-        ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(
-                CONTENT_URI,
-                COLUMNS,
-                selection,
-                null,
-                null);
-
-        cursor.moveToNext();
-        StatusDbEntity entity = new StatusDbEntity();
-        entity.setId(cursor.getInt(0));
-        entity.setName(cursor.getString(1));
-        entity.setSequenceId(cursor.getInt(2));
-        entity.setColor(cursor.getString(3));
-
-        return entity;
-    }
-
     /**
      * データの登録   ----------------③
      *
@@ -127,21 +78,6 @@ public class StatusDbDao {
         values.put(COLUMN_COLOR, color);
 
         return resolver.insert(CONTENT_URI, values);
-    }
-
-    /**
-     * データの更新   ----------------④
-     *
-     * @param entity
-     * @return
-     */
-    public int update(StatusDbEntity entity) {
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME, entity.getName());
-        values.put(COLUMN_SEQUENCE_ID, entity.getSequenceId());
-        values.put(COLUMN_COLOR, entity.getColor());
-        String whereClause = COLUMN_ID + "=" + entity.getId();
-        return db.update(TABLE_NAME, values, whereClause, null);
     }
 
     public int updateSequence(Context context, int id, int sequenceId) {

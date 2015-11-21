@@ -17,14 +17,10 @@
         <!-- ツールバーに影をつける -->
         <include layout="@layout/layout_toolbar_shadow" />
 
-        <!--<ListView-->
-            <!--android:id="@+id/status_setting_list"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent" />-->
         <jp.co.sskyknr.simpletaskmanage.view.SortableListView
+            android:id="@+id/status_setting_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/status_setting_list" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
@@ -46,4 +42,5 @@
             app:borderWidth="0dp"
             app:fabSize="normal" />
     </RelativeLayout>
+
 </FrameLayout>

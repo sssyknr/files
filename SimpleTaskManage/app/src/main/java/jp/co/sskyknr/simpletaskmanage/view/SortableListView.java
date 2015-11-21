@@ -263,8 +263,6 @@ public class SortableListView extends ListView implements
         if (mDragImageView != null) {
             getWindowManager().removeView(mDragImageView);
             mDragImageView = null;
-            // リサイクルするとたまに死ぬけどタイミング分からない by vvakame
-            // mDragBitmap.recycle();
             mDragBitmap = null;
 
             mActionDownEvent.recycle();
@@ -311,7 +309,7 @@ public class SortableListView extends ListView implements
      * ImageView 用 LayoutParams の座標情報を更新
      */
     protected void updateLayoutParams(int rawY) {
-        mLayoutParams.y = rawY - 32;
+        mLayoutParams.y = rawY - 160;
     }
 
     /**

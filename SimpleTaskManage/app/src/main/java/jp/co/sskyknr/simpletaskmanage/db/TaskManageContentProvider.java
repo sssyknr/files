@@ -93,7 +93,12 @@ public class TaskManageContentProvider extends ContentProvider{
             }
 
             SQLiteDatabase db = mDBHelper.getWritableDatabase();
-            long rowId = db.insert(insertTable, null, values);
+            long rowId = 0;
+            try {
+                rowId = db.insert(insertTable, null, values);
+            } finally {
+                db.close();
+            }
             if (rowId > 0) {
                 Uri returnUri = ContentUris.withAppendedId(contentUri, rowId);
                 getContext().getContentResolver().notifyChange(returnUri, null);
@@ -112,10 +117,18 @@ public class TaskManageContentProvider extends ContentProvider{
             int count;
             switch (sUriMatcher.match(uri)) {
                 case TASK:
-                    count = db.update(TaskDbDao.TABLE_NAME, values, selection, selectionArgs);
+                    try {
+                        count = db.update(TaskDbDao.TABLE_NAME, values, selection, selectionArgs);
+                    } finally {
+                        db.close();
+                    }
                     break;
                 case STATUS:
-                    count = db.update(StatusDbDao.TABLE_NAME, values, selection, selectionArgs);
+                    try {
+                        count = db.update(StatusDbDao.TABLE_NAME, values, selection, selectionArgs);
+                    } finally {
+                        db.close();
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown URI " + uri);
@@ -134,11 +147,19 @@ public class TaskManageContentProvider extends ContentProvider{
             switch (sUriMatcher.match(uri)) {
                 case TASK:
                 case TASK_ID:
-                    count = db.delete(TaskDbDao.TABLE_NAME, selection, selectionArgs);
+                    try {
+                        count = db.delete(TaskDbDao.TABLE_NAME, selection, selectionArgs);
+                    } finally {
+                        db.close();
+                    }
                     break;
                 case STATUS:
                 case STATUS_ID:
-                    count = db.delete(StatusDbDao.TABLE_NAME, selection, selectionArgs);
+                    try {
+                        count = db.delete(StatusDbDao.TABLE_NAME, selection, selectionArgs);
+                    } finally {
+                        db.close();
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown URI " + uri);

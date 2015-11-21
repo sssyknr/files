@@ -85,27 +85,21 @@ public class TaskDbDao {
         return resolver.insert(CONTENT_URI, values);
     }
 
-    /**
-     * データの更新   ----------------④
-     *
-     * @param entity
-     * @return
-     */
-    public int update(Context context, TaskDbEntity entity) {
-        ContentResolver resolver = context.getContentResolver();
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_TASK, entity.getTask());
-        values.put(COLUMN_STATUS, entity.getStatusId());
-        String whereClause = COLUMN_ID + "=" + entity.getRowId();
-        return resolver.update(CONTENT_URI, values, whereClause, null);
-    }
-
     public int updateStatus(Context context, int id, int statusId) {
         ContentResolver resolver = context.getContentResolver();
         ContentValues values = new ContentValues();
         values.put(COLUMN_STATUS, statusId);
         String whereClause = COLUMN_ID + "=" + id;
         String[] selection = {COLUMN_STATUS};
+        return resolver.update(CONTENT_URI, values, whereClause, null);
+    }
+
+    public int updateTask(Context context, int id, String task) {
+        ContentResolver resolver = context.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TASK, task);
+        String whereClause = COLUMN_ID + "=" + id;
+        String[] selection = {COLUMN_TASK};
         return resolver.update(CONTENT_URI, values, whereClause, null);
     }
 

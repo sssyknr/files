@@ -2,18 +2,16 @@ package jp.co.sskyknr.simpletaskmanage;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
 
@@ -24,7 +22,9 @@ import jp.co.sskyknr.simpletaskmanage.db.TaskDbHelper;
 import jp.co.sskyknr.simpletaskmanage.fragment.CreateStatusDialog;
 import jp.co.sskyknr.simpletaskmanage.fragment.DeleteStatusDialogFragment;
 import jp.co.sskyknr.simpletaskmanage.fragment.DeleteTaskDialogFragment;
+import jp.co.sskyknr.simpletaskmanage.ga.MeasurementGAManager;
 import jp.co.sskyknr.simpletaskmanage.util.Constants;
+import jp.co.sskyknr.simpletaskmanage.util.GAUtil;
 import jp.co.sskyknr.simpletaskmanage.view.SortableListView;
 
 public class StatusSettingActivity extends BaseActivity implements View.OnClickListener, DeleteStatusDialogFragment.deleteDialogCallback{
@@ -38,6 +38,7 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
     public StatusListAdapter mAdapter;
     /** ドラックのポジション */
     private int mDraggingPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,28 +46,9 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
 
         // ステータス取得
         getSupportLoaderManager().initLoader(0, null, statusQueryCallback);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_status_setting, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        // スクリーン名送信
+        GAUtil.sendGAEventOfScreen(THIS, GAUtil.SCREEN_STATUS);
     }
 
     @Override
@@ -109,6 +91,7 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
             public int onStartDrag(int position) {
                 mDraggingPosition = position;
                 mStatusListView.invalidateViews();
+
                 return 0;
             }
 
@@ -138,6 +121,9 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
             @Override
             public boolean onStopDrag(int positionFrom, int positionTo) {
                 mStatusListView.invalidateViews();
+                // 並べ替えイベント送信
+                GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_STATUS, GAUtil.ACTION_BUTTON, GAUtil.LABEL_SORT);
+
                 return false;
             }
         });
@@ -167,7 +153,6 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
         mStatusList.clear();
         mStatusList.addAll(tmp);
     }
-
     // ///////////////////////////////////////////////////////////////////////////////////////////
     // コールバック
     // ///////////////////////////////////////////////////////////////////////////////////////////
@@ -178,6 +163,7 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
             case R.id.status_setting_add:
                 CreateStatusDialog dialog = new CreateStatusDialog();
                 dialog.show(getSupportFragmentManager(), CreateStatusDialog.TAG);
+
                 break;
         }
     }
@@ -208,6 +194,8 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
                     cursor.moveToNext();
                 }
 
+                cursor.close();
+
                 // アダプターに設定
                 sortStatusListBySequenceId();
                 mAdapter.addAll(mStatusList);
@@ -228,14 +216,23 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
         int seqId = entity.getSequenceId();
         dao.delete(THIS, entity.getId());
 
-        for (StatusDbEntity tmp : mStatusList) {
-            if (tmp.getSequenceId() > seqId) {
-                dao.updateSequence(THIS, tmp.getId(), tmp.getSequenceId() - 1);
-            }
-        }
-
         // リストから消去
         mStatusList.remove(entity);
         mAdapter.remove(entity);
+
+        // ステータスIDの更新
+        for (int i = 0; i < mStatusList.size(); i++) {
+            StatusDbEntity tmp = mStatusList.get(i);
+            if (tmp.getSequenceId() > seqId) {
+                int newSeqId = tmp.getSequenceId() - 1;
+                tmp.setSequenceId(newSeqId);
+                dao.updateSequence(THIS, tmp.getId(), tmp.getSequenceId());
+                mStatusList.set(i, tmp);
+            }
+        }
+
+        // 状態消去GA送信
+        GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_STATUS, GAUtil.ACTION_BUTTON, GAUtil.LABEL_DELETE_STATUS);
+
     }
 }

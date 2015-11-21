@@ -33,8 +33,8 @@ public class DeleteStatusDialogFragment extends DialogFragment{
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("タスクの消去");
-        builder.setMessage("選択したステータスを消去しますか？");
+        builder.setTitle("状態の消去");
+        builder.setMessage("選択した状態を消去しますか？");
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
