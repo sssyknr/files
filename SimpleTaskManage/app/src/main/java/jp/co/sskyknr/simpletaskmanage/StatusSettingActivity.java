@@ -2,6 +2,7 @@ package jp.co.sskyknr.simpletaskmanage;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
@@ -9,19 +10,23 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import jp.co.sskyknr.simpletaskmanage.adapter.StatusListAdapter;
+import jp.co.sskyknr.simpletaskmanage.adapter.StatusListSequenceComparator;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbDao;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
 import jp.co.sskyknr.simpletaskmanage.db.TaskDbHelper;
 import jp.co.sskyknr.simpletaskmanage.fragment.CreateStatusDialog;
 import jp.co.sskyknr.simpletaskmanage.fragment.DeleteStatusDialogFragment;
 import jp.co.sskyknr.simpletaskmanage.fragment.DeleteTaskDialogFragment;
+import jp.co.sskyknr.simpletaskmanage.fragment.EditStatusDialog;
 import jp.co.sskyknr.simpletaskmanage.ga.MeasurementGAManager;
 import jp.co.sskyknr.simpletaskmanage.util.Constants;
 import jp.co.sskyknr.simpletaskmanage.util.GAUtil;
@@ -69,7 +74,8 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
         // ツールバー
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         toolbar.setTitle(R.string.label_menu_status);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setNavigationIcon(R.drawable.ic_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,23 +142,17 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
                 dialogFragment.setDeleteItem(values);
                 dialogFragment.show(getSupportFragmentManager(), DeleteTaskDialogFragment.TAG);
             }
+
+            @Override
+            public void onEditClick(int position, StatusDbEntity values) {
+                // 編集ボタンクリック時
+                EditStatusDialog dialog = EditStatusDialog.newInstance(values.getId(), values.getName(), values.getColor(), values.getSequenceId(), position);
+                dialog.show(getSupportFragmentManager(), EditStatusDialog.TAG);
+            }
         });
         mStatusListView.setAdapter(mAdapter);
     }
 
-    private void sortStatusListBySequenceId() {
-        ArrayList<StatusDbEntity> tmp = new ArrayList<>();
-        for (int i = 1; i <= mStatusList.size() ; i++ ) {
-            for (int j = 0; j < mStatusList.size(); j++) {
-                if (mStatusList.get(j).getSequenceId() == i) {
-                    tmp.add(mStatusList.get(j));
-                    break;
-                }
-            }
-        }
-        mStatusList.clear();
-        mStatusList.addAll(tmp);
-    }
     // ///////////////////////////////////////////////////////////////////////////////////////////
     // コールバック
     // ///////////////////////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,8 @@ public class StatusSettingActivity extends BaseActivity implements View.OnClickL
                 cursor.close();
 
                 // アダプターに設定
-                sortStatusListBySequenceId();
+//                sortStatusListBySequenceId();
+                Collections.sort(mStatusList, new StatusListSequenceComparator());
                 mAdapter.addAll(mStatusList);
             }
         }

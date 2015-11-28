@@ -2,6 +2,7 @@ package jp.co.sskyknr.simpletaskmanage;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -44,7 +45,8 @@ public class TaskRefineSettingActivity extends BaseActivity implements View.OnCl
         // ツールバー
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         toolbar.setTitle(R.string.label_menu_refine);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setNavigationIcon(R.drawable.ic_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,7 +59,6 @@ public class TaskRefineSettingActivity extends BaseActivity implements View.OnCl
         ListView statusList = (ListView) findViewById(R.id.task_refine_status_list);
         mAdapter = new TaskRefineSettingAdapter(THIS, R.layout.status_refine_list_item);
         statusList.setAdapter(mAdapter);
-
 
         // 完了ボタン
         Button complete = (Button) findViewById(R.id.task_refine_complete_button);

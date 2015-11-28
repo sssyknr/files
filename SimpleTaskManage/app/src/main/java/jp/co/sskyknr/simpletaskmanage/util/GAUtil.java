@@ -40,6 +40,8 @@ public class GAUtil {
     public static String ACTION_BUTTON = "buttonPress";
     /** 状態追加（ラベルで色を送信） */
     public static String ACTION_ADD_STATUS = "addStatus";
+    /** 状態編集（ラベルで色を送信） */
+    public static String ACTION_EDIT_STATUS = "editStatus";
     // ----------------------------------------------------
     // ラベル
     // ----------------------------------------------------

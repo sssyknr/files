@@ -20,13 +20,25 @@
         android:maxLines="2"
         android:textSize="20sp" />
 
-    <ImageView
-        android:id="@+id/status_color_image"
+    <FrameLayout
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:layout_marginEnd="20dp"
-        android:layout_marginRight="20dp"
-        android:scaleType="fitCenter" />
+        android:layout_marginRight="20dp">
+
+        <ImageView
+            android:id="@+id/status_color_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_create_black_24dp" />
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/status_list_item_trash"
@@ -34,7 +46,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_delete_black_24dp" />
+        android:src="@drawable/ic_delete" />
 
     <View
         android:layout_width="20dp"

@@ -11,10 +11,12 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -189,6 +191,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
                 break;
             case R.id.menu_about:
                 // AboutMe
+                intent = new Intent(THIS, AboutMeActivity.class);
+                startActivity(intent);
                 mDrawerLayout.closeDrawer(Gravity.RIGHT);
                 // GAタスク追加アクション送信
                 GAUtil.sendGAEventOfAction(THIS, GAUtil.CATEGORY_MAIN, GAUtil.ACTION_BUTTON, GAUtil.LABEL_ABOUT_ME);
@@ -202,6 +206,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
      * 初期化
      */
     private void init() {
+        // IME非表示
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         setContentView(R.layout.activity_main);
 
         // ナビゲーションドロワー
@@ -209,7 +216,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
         // ツールバー
         Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
-        toolbar.setTitle(getString(R.string.label_task));
         toolbar.inflateMenu(R.menu.menu_main);
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SimpleTaskManage</string>
+    <string name="app_name">TODOMO</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -7,15 +7,22 @@
     <string name="task_add_message">タスクを入力してください。</string>
     <string name="title_activity_status_setting">StatusSettingActivity</string>
     <string name="label_hint_add_task">タスクを入力</string>
-    <string name="label_menu_status">状態設定</string>
-    <string name="label_menu_sort">並べ替え</string>
-    <string name="label_menu_refine">絞り込み</string>
-    <string name="label_menu_about_me">AboutMe</string>
-    <string name="label_sort_status_ascending">状態昇順</string>
-    <string name="label_sort_status_descending">状態降順</string>
-    <string name="label_sort_date_ascending">日付昇順</string>
-    <string name="label_sort_date_descending">日付降順</string>
+    <string name="label_menu_status">状 態 設 定</string>
+    <string name="label_menu_sort">並 べ 替 え</string>
+    <string name="label_menu_refine">絞 り 込 み</string>
+    <string name="label_menu_about_me">こ の ア プ リ に つ い て</string>
+    <string name="label_sort_status_ascending">状 態 昇 順</string>
+    <string name="label_sort_status_descending">状 態 降 順</string>
+    <string name="label_sort_date_ascending">日 付 昇 順</string>
+    <string name="label_sort_date_descending">日 付 降 順</string>
     <string name="label_task">タスク</string>
-    <string name="label_complete">完了</string>
+    <string name="label_complete">完　了</string>
+    <string name="label_status">状 態</string>
+    <string name="label_select_color">色の選択</string>
+    <string name="label_edit">編集</string>
+    <string name="label_close">閉じる</string>
+    <string name="label_cancel">キャンセル</string>
+    <string name="label_ok">OK</string>
+    <string name="title_activity_about_me">AboutMeActivity</string>
 
 </resources>

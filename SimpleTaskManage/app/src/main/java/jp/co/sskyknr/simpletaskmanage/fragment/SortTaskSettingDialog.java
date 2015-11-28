@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -31,12 +32,10 @@ public class SortTaskSettingDialog extends DialogFragment{
         final MeasurementGAManager application = (MeasurementGAManager) getActivity().getApplication();
         RadioButton button = (RadioButton) dialogView.findViewById(application.sortCheckId);
         button.setChecked(true);
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(dialogView);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        Button okButton = (Button) dialogView.findViewById(R.id.sort_ok);
+        okButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 int selectedButtonId = radioGroup.getCheckedRadioButtonId();
                 application.sortCheckId = selectedButtonId;
                 RadioButton selectedButton = (RadioButton) dialogView.findViewById(selectedButtonId);
@@ -44,16 +43,22 @@ public class SortTaskSettingDialog extends DialogFragment{
                 if (getActivity() instanceof clickButton) {
                     ((clickButton) getActivity()).onOk(select);
                 }
+                dismiss();
             }
         });
-        builder.setNegativeButton("キャンセル", new DialogInterface.OnClickListener() {
+        Button cancelButton = (Button) dialogView.findViewById(R.id.sort_cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View v) {
                 if (getActivity() instanceof clickButton) {
                     ((clickButton) getActivity()).onCancel();
                 }
+                dismiss();
             }
         });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(dialogView);
 
         // 並べ替えダイアログGA訪問送信
         GAUtil.sendGAEventOfScreen(getActivity(), GAUtil.SCREEN_SORT);

@@ -2,19 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@drawable/ic_dialog_bg_t"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <!-- ステータス名 -->
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_status" />
 
-        <EditText
-            android:id="@+id/edit_status_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="ステータス名" />
-    </android.support.design.widget.TextInputLayout>
+    <EditText
+        android:id="@+id/edit_status_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_input" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:text="カラー"
+            android:text="@string/label_select_color"
             android:textSize="16sp" />
 
         <TextView
@@ -46,8 +48,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -225,8 +228,9 @@
 
     <Button
         android:id="@+id/create_status_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="追加" />
+        android:layout_gravity="center"
+        android:background="@drawable/selector_dialog_button" />
 
 </LinearLayout>

@@ -4,4 +4,6 @@
     <color name="normal">#FFFFFF</color>
     <color name="border">#616161</color>
     <color name="border_pressed">#414141</color>
+    <color name="main_color">#383842</color>
+    <color name="drawer_color">#f0eff5</color>
 </resources>

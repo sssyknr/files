@@ -4,10 +4,22 @@
     android:orientation="vertical">
 
     <!-- ツールバー -->
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/main_toolbar"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="50dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/main_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/main_color" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_logo_t" />
+    </FrameLayout>
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/main_drawer_layout"
@@ -34,22 +46,32 @@
             <!-- タスク追加 -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:background="@color/main_color"
+                android:paddingBottom="8dp"
+                android:paddingEnd="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingStart="8dp"
+                android:paddingTop="8dp">
 
                 <EditText
                     android:id="@+id/main_task_add_text"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:layout_weight="1"
+                    android:background="@drawable/ic_input"
                     android:hint="@string/label_hint_add_task" />
 
                 <Button
                     android:id="@+id/main_task_add_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/selector_button"
                     android:text="@string/main_add_task" />
             </LinearLayout>
-
 
         </LinearLayout>
 
@@ -58,7 +80,7 @@
             android:layout_width="240dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:background="@drawable/white"
+            android:background="@color/drawer_color"
             android:clickable="true"
             android:orientation="vertical">
 
@@ -69,49 +91,41 @@
                 android:id="@+id/menu_status_setting"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/selector_textview"
+                android:background="@drawable/selector_drawer_status"
                 android:gravity="center"
                 android:onClick="onClick"
                 android:text="@string/label_menu_status"
                 android:textSize="16sp" />
 
-            <include layout="@layout/layout_separate_line" />
-
             <TextView
                 android:id="@+id/menu_sort"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/selector_textview"
+                android:background="@drawable/selector_drawer_sort"
                 android:gravity="center"
                 android:onClick="onClick"
                 android:text="@string/label_menu_sort"
                 android:textSize="16sp" />
 
-            <include layout="@layout/layout_separate_line" />
-
             <TextView
                 android:id="@+id/menu_refine"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/selector_textview"
+                android:background="@drawable/selector_drawer_refine"
                 android:gravity="center"
                 android:onClick="onClick"
                 android:text="@string/label_menu_refine"
                 android:textSize="16sp" />
 
-            <include layout="@layout/layout_separate_line" />
-
             <TextView
                 android:id="@+id/menu_about"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/selector_textview"
+                android:background="@drawable/selector_drawer_aboutme"
                 android:gravity="center"
                 android:onClick="onClick"
                 android:text="@string/label_menu_about_me"
                 android:textSize="16sp" />
-
-            <include layout="@layout/layout_separate_line" />
 
         </LinearLayout>
     </android.support.v4.widget.DrawerLayout>
@@ -120,6 +134,7 @@
         android:id="@+id/adView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@color/main_color"
         ads:adSize="BANNER"
         ads:adUnitId="ca-app-pub-6182089452981195/5721295867" />
 </LinearLayout>

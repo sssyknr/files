@@ -89,6 +89,16 @@ public class StatusDbDao {
         return resolver.update(CONTENT_URI, values, whereClause, null);
     }
 
+    public int updateStatus(Context context, int id, String status, String color) {
+        ContentResolver resolver = context.getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NAME, status);
+        values.put(COLUMN_COLOR, color);
+        String whereClause = COLUMN_ID + "=" + id;
+        String[] selection = {COLUMN_NAME, COLUMN_COLOR};
+        return resolver.update(CONTENT_URI, values, whereClause, null);
+    }
+
     /**
      * データの削除   ----------------⑤
      *

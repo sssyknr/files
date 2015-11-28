@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -46,8 +47,10 @@ public class CreateStatusDialog extends DialogFragment implements View.OnClickLi
         mSelectedLeft = (TextView) view.findViewById(R.id.selected_color_left);
         mSelectedRight = (TextView) view.findViewById(R.id.selected_color_right);
         mStatusText = (EditText) view.findViewById(R.id.edit_status_name);
+        Button createButton = (Button) view.findViewById(R.id.create_status_button);
+        createButton.setText("追加");
+        createButton.setOnClickListener(this);
 
-        view.findViewById(R.id.create_status_button).setOnClickListener(this);
         view.findViewById(R.id.image_red).setOnClickListener(this);
         view.findViewById(R.id.image_black).setOnClickListener(this);
         view.findViewById(R.id.image_amber).setOnClickListener(this);

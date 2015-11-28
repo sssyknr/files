@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="jp.co.sskyknr.simpletaskmanage">
+    package="jp.co.sskyknr.simpletaskmanage" >
 
     <!-- Google Analytics -->
     <!-- Google adMob -->
@@ -10,12 +10,12 @@
     <application
         android:name=".ga.MeasurementGAManager"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_logo"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,6 +39,10 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+        <activity
+            android:name=".AboutMeActivity"
+            android:label="@string/title_activity_about_me" >
+        </activity>
     </application>
 
 </manifest>

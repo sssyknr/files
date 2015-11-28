@@ -14,12 +14,14 @@ import java.util.Collection;
 import jp.co.sskyknr.simpletaskmanage.R;
 import jp.co.sskyknr.simpletaskmanage.db.StatusDbEntity;
 import jp.co.sskyknr.simpletaskmanage.dto.TaskListItemDto;
+import jp.co.sskyknr.simpletaskmanage.fragment.EditStatusDialog;
 import jp.co.sskyknr.simpletaskmanage.util.colorUtil;
 
 /**
  * ステータス設定用アダプター
  */
-public class StatusListAdapter extends BaseAdapter{
+public class StatusListAdapter extends BaseAdapter {
+    public static final String TAG = "StatusListAdapter";
     /** 表示リスト */
     private ArrayList<StatusDbEntity> mList = new ArrayList<>();
     /** アクティビティ */
@@ -68,6 +70,16 @@ public class StatusListAdapter extends BaseAdapter{
             int resId = colorUtil.setBgImage(mActivity, mList.get(position).getColor());
             viewHolder.labelColor.setBackgroundResource(resId);
             viewHolder.colorImage.setImageResource(resId);
+            viewHolder.colorImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // 編集ボタン
+                    StatusDbEntity entity = (StatusDbEntity) getItem(position);
+                    if (mListener != null) {
+                        mListener.onEditClick(position, entity);
+                    }
+                }
+            });
             viewHolder.trashButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -84,6 +96,11 @@ public class StatusListAdapter extends BaseAdapter{
             }
         }
         return ret;
+    }
+
+    public void set(int position, StatusDbEntity object) {
+        mList.set(position, object);
+        notifyDataSetChanged();
     }
 
     public void add(StatusDbEntity object) {
@@ -129,5 +146,6 @@ public class StatusListAdapter extends BaseAdapter{
     // ////////////////////////////////////////////////////////////////////////////////////////////
     public interface onItemButtonListener {
         void onTrashClick(StatusDbEntity values);
+        void onEditClick(int position, StatusDbEntity values);
     }
 }
